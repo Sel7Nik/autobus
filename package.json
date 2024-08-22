@@ -1,0 +1,20 @@
+{
+  "name": "autobus",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bus",
+    "timetable"
+  ],
+  "type": "module",
+  "author": "Nik Semenov",
+  "license": "ISC",
+  "description": "Онлайн расписание автобусов",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
