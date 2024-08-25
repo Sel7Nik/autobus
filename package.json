@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.js"
   },
   "keywords": [
     "bus",
@@ -15,6 +14,10 @@
   "license": "ISC",
   "description": "Онлайн расписание автобусов",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "luxon": "^3.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }
