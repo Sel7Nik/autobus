@@ -12,6 +12,7 @@ const PORT = 3000
 const TIMEZONE = 'UTC'
 
 const app = express()
+app.use(express.static(path.join(__dirname, 'public')))
 
 const loadBuses = async () => {
   const data = await readFile(path.join(__dirname, 'buses.json'), 'utf-8')
@@ -52,7 +53,7 @@ const sendUpdateData = async () => {
     return {
       ...bus,
       nextDeparture: {
-        data: nextDeparture.toFormat('yyyy--MM-dd'),
+        date: nextDeparture.toFormat('yyyy-MM-dd'),
         time: nextDeparture.toFormat('HH:mm'),
       },
     }
