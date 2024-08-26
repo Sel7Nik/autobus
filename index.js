@@ -40,8 +40,8 @@ const getNextDeparture = (firstDepartureTime, frequencyMinutes) => {
     if (departure > endOfDay) {
       departure = departure.startOf('day').plus({ days: 1 }).set({ hours, minutes })
     }
-    return departure
   }
+  return departure
 }
 
 const sendUpdateData = async () => {
@@ -62,11 +62,21 @@ const sendUpdateData = async () => {
   return updatedBuses
 }
 
+const sortBuses = (buses) =>
+  [...buses].sort(
+    (a, b) =>
+      // DateTime.fromISO(`${a.nextDeparture.date}T${a.nextDeparture.time}Z`) -
+      // DateTime.fromISO(`${b.nextDeparture.date}T${b.nextDeparture.time}Z`)
+      new Date(`${a.nextDeparture.date}T${a.nextDeparture.time}Z`) -
+      new Date(`${b.nextDeparture.date}T${b.nextDeparture.time}Z`)
+  )
+
 app.get('/next-departure', async (req, res) => {
   try {
     const updatedBuses = await sendUpdateData()
-    console.log('updatedBuses: ', updatedBuses)
-    res.json(updatedBuses)
+    const sortedBuses = sortBuses(updatedBuses)
+
+    res.json(sortedBuses)
   } catch (error) {
     res.send('error : ', error)
   }
