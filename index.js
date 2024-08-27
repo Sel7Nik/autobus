@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import url from 'node:url'
+import { WebSocketServer } from 'ws'
 
 const __filename = url.fileURLToPath(import.meta.url)
 
@@ -44,7 +45,7 @@ const getNextDeparture = (firstDepartureTime, frequencyMinutes) => {
   return departure
 }
 
-const sendUpdateData = async () => {
+const sendUpdatedData = async () => {
   // получаем список всех расписаний
   const buses = await loadBuses()
 
@@ -73,7 +74,7 @@ const sortBuses = (buses) =>
 
 app.get('/next-departure', async (req, res) => {
   try {
-    const updatedBuses = await sendUpdateData()
+    const updatedBuses = await sendUpdatedData()
     const sortedBuses = sortBuses(updatedBuses)
 
     res.json(sortedBuses)
@@ -82,6 +83,40 @@ app.get('/next-departure', async (req, res) => {
   }
 })
 
-app.listen(PORT, () => {
-  console.log('Server is running on port http://localhost:' + PORT)
+const wss = new WebSocketServer({ noServer: true })
+
+const clients = new Set()
+
+wss.on('connection', (ws) => {
+  console.log('WebSocket connection')
+  clients.add(ws)
+
+  const sendUpdates = async () => {
+    try {
+      const updatedBuses = await sendUpdatedData()
+      const sortedBuses = sortBuses(updatedBuses)
+
+      ws.send(JSON.stringify(sortedBuses))
+    } catch (error) {
+      console.error(`Error websocket connection: ${error}`)
+    }
+  }
+
+  const intervalId = setInterval(sendUpdates, 1000)
+
+  ws.on('close', () => {
+    clearInterval(intervalId)
+    clients.delete(ws)
+    console.log('WebSocket closed')
+  })
+})
+
+const server = app.listen(PORT, () => {
+  console.log('Server is running on http://localhost:' + PORT)
+})
+
+server.on('upgrade', (req, socket, head) => {
+  wss.handleUpgrade(req, socket, head, (ws) => {
+    wss.emit('connection', ws, req)
+  })
 })
