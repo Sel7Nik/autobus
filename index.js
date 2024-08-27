@@ -1,5 +1,5 @@
 import express from 'express'
-import { DateTime } from 'luxon'
+import { DateTime, Duration } from 'luxon'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import url from 'node:url'
@@ -48,14 +48,17 @@ const getNextDeparture = (firstDepartureTime, frequencyMinutes) => {
 const sendUpdatedData = async () => {
   // получаем список всех расписаний
   const buses = await loadBuses()
-
+  const now = DateTime.now().setZone(TIMEZONE)
   const updatedBuses = buses.map((bus) => {
     const nextDeparture = getNextDeparture(bus.firstDepartureTime, bus.frequencyMinutes)
+
+    const timeRemaining = Duration.fromMillis(nextDeparture.diff(now))
     return {
       ...bus,
       nextDeparture: {
         date: nextDeparture.toFormat('yyyy-MM-dd'),
-        time: nextDeparture.toFormat('HH:mm'),
+        time: nextDeparture.toFormat('HH:mm:ss'),
+        remaining: timeRemaining.toFormat('hh:mm:ss'),
       },
     }
   })
