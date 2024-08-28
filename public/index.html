@@ -5,13 +5,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="js/script.js" defer></script>
   <title>Онлайн табло расписания автобусов</title>
 </head>
 
 <body>
   <div class="container">
-    <h1 class="mb-4">Ближайшие отправления автобусов</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="mb-3 ">Ближайшие отправления автобусов</h1>
+      <div id="current-time-container"
+        class="alert alert-primary d-flex align-items-center p-2 mb-0 gap-4">
+        <span class="bi bi-clock-fill"></span>
+        <span id="current-time" class="fw-bold"></span>
+      </div>
+    </div>
+
+
     <table class="table table-striped table-bordered" id="bus">
       <thead>
         <tr>
